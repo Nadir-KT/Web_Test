@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo TECH Engineers & Construction</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE STYLES ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }
+
+        /* ===== HEADER STYLES ===== */
+        .header { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; position: fixed; top: 0; width: 100%; z-index: 1000; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo img { height: 50px; width: auto; }
+        .company-name h1 { font-size: 1.4rem; font-weight: 600; }
+        .company-tagline { font-size: 0.85rem; color: #666; }
+
+        /* Navigation Styles */
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav ul li { position: relative; }
+        nav ul li a { color: #333; font-weight: 500; text-decoration: none; }
+        nav ul li:hover > ul { display: block; }
+        nav ul ul { display: none; position: absolute; top: 100%; left: 0; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 10px 0; min-width: 220px; z-index: 100; }
+        nav ul ul li { padding: 8px 15px; }
+        nav ul ul li a { color: #333; font-size: 0.9rem; }
+        nav ul ul li:hover { background: #f5f5f5; }
+
+        /* Header Contact Buttons */
+        .contact-header { display: flex; gap: 10px; }
+        .btn-small { padding: 8px 16px; border-radius: 25px; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .btn-whatsapp { background: #25D366; color: #fff; }
+        .btn-call { background: #1e3c72; color: #fff; }
+
+        /* ===== HERO SECTION ===== */
+        .hero { margin-top: 90px; background: url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1950&q=80') center/cover; padding: 100px 20px; color: #fff; text-align: center; }
+        .hero h2 { font-size: 3rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.2rem; margin-bottom: 30px; }
+        .cta-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .cta-btn { padding: 12px 30px; border-radius: 30px; font-weight: 600; text-decoration: none; }
+        .cta-primary { background: #e67e22; color: #fff; }
+        .cta-secondary { background: transparent; color: #fff; border: 2px solid #fff; }
+
+        /* ===== SERVICES SECTION ===== */
+        .services { padding: 80px 20px; background: #fff; }
+        .section-title { text-align: center; font-size: 2.5rem; color: #1e3c72; margin-bottom: 15px; }
+        .section-subtitle { text-align: center; color: #666; margin-bottom: 40px; }
+        .services-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .service-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+        .service-card:hover { transform: translateY(-5px); }
+        .service-card img { width: 100%; height: 180px; object-fit: cover; }
+        .service-content { padding: 20px; }
+        .service-content h3 { color: #1e3c72; margin-bottom: 10px; font-size: 1.2rem; }
+        .service-content p { font-size: 0.95rem; color: #555; }
+
+        /* ===== GALLERY SECTION ===== */
+        .gallery { padding: 80px 20px; background: #f9f9f9; }
+        .gallery-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .gallery-item { position: relative; overflow: hidden; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .gallery-item img { width: 100%; height: 250px; object-fit: cover; transition: transform 0.3s ease; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 10px; transform: translateY(100%); transition: transform 0.3s ease; }
+        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
+
+        /* ===== CONTACT & ENQUIRY FORM STYLES ===== */
+        .contact { padding: 80px 20px; background: #f9f9f9; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1200px; margin: auto; }
+        .contact-info h3, .enquiry-form h3 { color: #1e3c72; margin-bottom: 20px; font-size: 1.5rem; }
+        .contact-details p { margin-bottom: 15px; }
+        .contact-details a { color: #1e3c72; text-decoration: none; }
+        .contact-details a:hover { text-decoration: underline; }
+        
+        /* Enquiry Form Styles */
+        .enquiry-form { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
+        .form-group textarea { height: 120px; resize: vertical; }
+        .submit-btn { background: #e67e22; color: #fff; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; width: 100%; }
+        .submit-btn:hover { background: #d35400; }
+        .submit-btn:disabled { background: #cccccc; cursor: not-allowed; }
+
+        /* Form Status Messages */
+        .form-status { padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; display: none; }
+        .form-status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .form-status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+
+        /* ===== FOOTER STYLES ===== */
+        .footer { background: #1a1a1a; color: #fff; padding: 50px 20px; }
+        .footer-content { max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 30px; }
+        .footer-col h3 { margin-bottom: 15px; color: #e67e22; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 8px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; }
+        .footer-col ul li a:hover { color: #fff; }
+        .footer-col a.email-link { color: #25D366; font-weight: 500; text-decoration: none; }
+        .footer-col a.email-link:hover { color: #fff; }
+
+        /* ===== FLOATING BUTTONS ===== */
+        .floating-btn { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+        .floating-btn a { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .floating-btn .wa { background: #25D366; }
+        .floating-btn .call { background: #1e3c72; }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 15px; }
+            nav ul { flex-wrap: wrap; justify-content: center; }
+            .contact-header { margin-top: 10px; }
+            .hero h2 { font-size: 2rem; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        // Main App Component
+        const App = () => {
+            // Services data array
+            const services = [
+                { title: 'RCC Concrete Cutting', img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80', desc: 'Precision RCC cutting with diamond blade technology for structural modifications and openings in reinforced concrete structures.' },
+                { title: 'Slab Cutting', img: 'https://images.unsplash.com/photo-1592595896616-c37162298647?auto=format&fit=crop&w=1200&q=80', desc: 'Professional concrete slab cutting services for construction, renovation, and utility installation projects.' },
+                { title: 'Foundation Cutting', img: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=60', desc: 'Expert foundation cutting and modification services for construction and infrastructure development projects.' },
+                { title: 'RCC Core Cutting', img: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1200&q=60', desc: 'High-precision core cutting for utility installations, HVAC systems, and structural analysis requirements.' },
+                { title: 'Erection & Dismantling', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=80', desc: 'Safe and efficient heavy lifting, crane operations, and dismantling services for industrial and construction projects.' },
+                { title: 'Industrial Shutdown', img: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1200&q=80', desc: 'Complete industrial plant maintenance, shutdown services, and turnaround management for manufacturing facilities.' },
+                { title: 'Concrete Chipping & Drilling', img: 'https://images.unsplash.com/photo-1534398079543-7ae6d016b86a?auto=format&fit=crop&w=1200&q=80', desc: 'Professional concrete surface preparation, chipping, and drilling services for civil and industrial applications.' },
+                { title: 'Anchoring Fixing with Chemicals', img: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1200&q=80', desc: 'Advanced chemical anchoring solutions for structural reinforcement and heavy-duty fastening applications.' }
+            ];
+
+            // Gallery images (sample construction images - replace with actual VREC images)
+            const galleryImages = [
+                { img: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 1' },
+                { img: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 2' },
+                { img: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 3' },
+                { img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 4' },
+                { img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 5' },
+                { img: 'https://images.unsplash.com/photo-1534398079543-7ae6d016b86a?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 6' }
+            ];
+
+            // Form submission handler with email and WhatsApp integration
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const submitBtn = form.querySelector('.submit-btn');
+                const statusDiv = form.querySelector('.form-status');
+                
+                // Get form data
+                const formData = new FormData(form);
+                const data = {
+                    name: formData.get('name'),
+                    phone: formData.get('phone'),
+                    email: formData.get('email'),
+                    service: formData.get('service'),
+                    message: formData.get('message')
+                };
+
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                statusDiv.className = 'form-status';
+                statusDiv.style.display = 'none';
+
+                try {
+                    // Send to Email (using Formspree or similar service)
+                    // Replace with your actual form endpoint
+                    const emailResponse = await fetch('https://formspree.io/f/your-form-id', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    // Send to WhatsApp
+                    const whatsappMessage = `New Enquiry from Website:%0A%0AName: ${data.name}%0APhone: ${data.phone}%0AEmail: ${data.email}%0AService: ${data.service}%0AMessage: ${data.message}`;
+                    const whatsappUrl = `https://wa.me/919000316877?text=${whatsappMessage}`;
+                    
+                    // Open WhatsApp in new tab
+                    window.open(whatsappUrl, '_blank');
+
+                    // Show success message
+                    statusDiv.className = 'form-status success';
+                    statusDiv.textContent = 'Thank you! Your enquiry has been sent. We will contact you soon.';
+                    statusDiv.style.display = 'block';
+                    
+                    // Reset form
+                    form.reset();
+                    
+                } catch (error) {
+                    // Show error message
+                    statusDiv.className = 'form-status error';
+                    statusDiv.textContent = 'Sorry, there was an error sending your enquiry. Please try again or contact us directly.';
+                    statusDiv.style.display = 'block';
+                } finally {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Enquiry';
+                }
+            };
+
+            return (
+                <>
+                    {/* Header Section */}
+                    <header className="header">
+                        <div className="header-content">
+                            <div className="logo">
+                                <img src="logo.png" alt="Neo TECH Logo" />
+                                <div className="company-name">
+                                    <h1>Neo TECH Engineers & Construction</h1>
+                                    <div className="company-tagline">Building Excellence Since 2010</div>
+                                </div>
+                            </div>
+                            <nav>
+                                <ul>
+                                    <li><a href="#home">Home</a></li>
+                                    <li>
+                                        <a href="#services">Services ▾</a>
+                                        <ul>
+                                            {services.map((s, i) => (<li key={i}><a href={`#service-${i}`}>{s.title}</a></li>))}
+                                        </ul>
+                                    </li>
+                                    <li><a href="#gallery">Gallery</a></li>
+                                    <li><a href="#about">About</a></li>
+                                    <li><a href="#contact">Contact</a></li>
+                                </ul>
+                            </nav>
+                            <div className="contact-header">
+                                <a href="https://wa.me/919000316877" className="btn-small btn-whatsapp"><i className="fab fa-whatsapp"></i> WhatsApp</a>
+                                <a href="tel:+918997342004" className="btn-small btn-call"><i className="fas fa-phone"></i> Call</a>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Hero Section */}
+                    <section className="hero" id="home">
+                        <h2>Building Your Dreams, Brick by Brick</h2>
+                        <p>Experts in RCC cutting, core drilling, retrofitting, heavy lifting and turnkey civil & industrial works.</p>
+                        <div className="cta-buttons">
+                            <a href="#contact" className="cta-btn cta-primary">Get Free Quote</a>
+                            <a href="#services" className="cta-btn cta-secondary">Our Services</a>
+                        </div>
+                    </section>
+
+                    {/* Services Section */}
+                    <section className="services" id="services">
+                        <h2 className="section-title">Our Services</h2>
+                        <p className="section-subtitle">Comprehensive construction and engineering solutions</p>
+                        <div className="services-grid">
+                            {services.map((s, i) => (
+                                <div key={i} id={`service-${i}`} className="service-card">
+                                    <img src={s.img} alt={s.title} />
+                                    <div className="service-content">
+                                        <h3>{s.title}</h3>
+                                        <p>{s.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Gallery Section */}
+                    <section className="gallery" id="gallery">
+                        <h2 className="section-title">Our Gallery</h2>
+                        <p className="section-subtitle">Showcasing our construction projects and expertise</p>
+                        <div className="gallery-grid">
+                            {galleryImages.map((image, index) => (
+                                <div key={index} className="gallery-item">
+                                    <img src={image.img} alt={image.title} />
+                                    <div className="gallery-overlay">
+                                        <h4>{image.title}</h4>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Contact & Enquiry Section */}
+                    <section className="contact" id="contact">
+                        <h2 className="section-title">Get In Touch</h2>
+                        <p className="section-subtitle">We're here to help with all your construction needs</p>
+                        
+                        <div className="contact-grid">
+                            {/* Contact Information Column */}
+                            <div className="contact-info">
+                                <h3>Contact Information</h3>
+                                <div className="contact-details">
+                                    <p><strong>Address:</strong><br/>
+                                    Muniraju Building, Shop No 1, Ground floor, Near Kasaba Circle,<br/>
+                                    Honnakalashapura Village, Sidihosakote, Bangalore - 562106</p>
+                                    
+                                    <p><strong>Phone:</strong><br/>
+                                    <a href="https://wa.me/919000316877">+91 9000316877 (WhatsApp)</a><br/>
+                                    <a href="tel:+918997342004">+91 8997342004</a></p>
+                                    
+                                    <p><strong>Email:</strong><br/>
+                                    <a href="mailto:ntecworks@gmail.com">ntecworks@gmail.com</a></p>
+                                </div>
+                                
+                                <div className="map-container" style={{marginTop: '30px'}}>
+                                    <iframe src="https://maps.google.com/maps?q=12.728757858276367%2C77.67668151855469&z=17&hl=en&output=embed" 
+                                            allowFullScreen="" loading="lazy" title="Neo TECH Location"></iframe>
+                                </div>
+                            </div>
+                            
+                            {/* Enquiry Form Column */}
+                            <div className="enquiry-form">
+                                <h3>Send Your Enquiry</h3>
+                                <div className="form-status"></div>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="form-group">
+                                        <label htmlFor="name">Name *</label>
+                                        <input type="text" id="name" name="name" required />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="phone">Phone Number *</label>
+                                        <input type="tel" id="phone" name="phone" required />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="email">Email Address</label>
+                                        <input type="email" id="email" name="email" />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="service">Service Interested In</label>
+                                        <select id="service" name="service">
+                                            <option value="">Select a service</option>
+                                            {services.map((s, i) => (
+                                                <option key={i} value={s.title}>{s.title}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="message">Your Message *</label>
+                                        <textarea id="message" name="message" required></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" className="submit-btn">Send Enquiry</button>
+                                    <p style={{marginTop: '10px', fontSize: '0.9rem', color: '#666', textAlign: 'center'}}>
+                                        Your enquiry will be sent to WhatsApp. Please send the message in WhatsApp window.
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer Section */}
+                    <footer className="footer">
+                        <div className="footer-content">
+                            <div className="footer-col">
+                                <h3>Neo TECH Engineers</h3>
+                                <p>Leading specialists in construction engineering, RCC cutting, heavy lifting, and industrial maintenance solutions. Serving clients across Bangalore and South India with precision and excellence.</p>
+                            </div>
+                            <div className="footer-col">
+                                <h3>Services</h3>
+                                <ul>
+                                    {services.map((s, i) => (<li key={i}><a href={`#service-${i}`}>{s.title}</a></li>))}
+                                </ul>
+                            </div>
+                            <div className="footer-col">
+                                <h3>Enquiry</h3>
+                                <p>Email us at <a href="mailto:ntecworks@gmail.com" className="email-link">ntecworks@gmail.com</a> or WhatsApp us for project quotations:</p>
+                                <ul>
+                                    <li><a href="https://wa.me/919000316877">+91 9000316877</a></li>
+                                </ul>
+                            </div>
+                            <div className="footer-col">
+                                <h3>Quick Links</h3>
+                                <ul>
+                                    <li><a href="#home">Home</a></li>
+                                    <li><a href="#services">Services</a></li>
+                                    <li><a href="#gallery">Gallery</a></li>
+                                    <li><a href="#contact">Contact</a></li>
+                                    <li><a href="tel:+918997342004">Emergency Call</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p style={{textAlign:'center',marginTop:'20px',color:'#aaa'}}>© 2025 Neo TECH Engineers & Construction. All Rights Reserved.</p>
+                    </footer>
+
+                    {/* Floating Action Buttons */}
+                    <div className="floating-btn">
+                        <a href="https://wa.me/919000316877" target="_blank" className="wa"><i className="fab fa-whatsapp"></i></a>
+                        <a href="tel:+918997342004" className="call"><i className="fas fa-phone"></i></a>
+                    </div>
+                </>
+            );
+        };
+
+        // Render the App component to the root element
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
