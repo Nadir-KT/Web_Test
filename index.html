@@ -163,29 +163,23 @@
                     message: formData.get('message')
                 };
 
-                // Show loading state
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending...';
-                statusDiv.className = 'form-status';
-                statusDiv.style.display = 'none';
-
                 try {
-                    // Send to Email (using Formspree or similar service)
-                    // Replace with your actual form endpoint
-                    const emailResponse = await fetch('https://formspree.io/f/your-form-id', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    });
-
                     // Send to WhatsApp
-                    const whatsappMessage = `New Enquiry from Website:%0A%0AName: ${data.name}%0APhone: ${data.phone}%0AEmail: ${data.email}%0AService: ${data.service}%0AMessage: ${data.message}`;
+                    const whatsappMessage = `New Enquiry from: ${data.name},%0APhone: ${data.phone},%0AEmail: ${data.email},%0AService: ${data.service},%0AMessage: ${data.message}`;
                     const whatsappUrl = `https://wa.me/919000316877?text=${whatsappMessage}`;
                     
                     // Open WhatsApp in new tab
                     window.open(whatsappUrl, '_blank');
+                    
+                    // Email (via mailto)
+					const mailtoLink = `mailto:ntecworks@gmail.com?subject=Enquiry from ${name}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + ' (' + email + ')')}`;
+					window.open(mailtoLink, '_blank');
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                    statusDiv.className = 'form-status';
+                    statusDiv.style.display = 'none';
 
                     // Show success message
                     statusDiv.className = 'form-status success';
