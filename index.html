@@ -81,9 +81,16 @@
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
         .form-group textarea { height: 120px; resize: vertical; }
-        .submit-btn { background: #e67e22; color: #fff; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; width: 100%; }
+        
+        /* Form Button Styles */
+        .form-buttons { display: flex; gap: 10px; }
+        .submit-btn { background: #e67e22; color: #fff; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; flex: 1; }
         .submit-btn:hover { background: #d35400; }
         .submit-btn:disabled { background: #cccccc; cursor: not-allowed; }
+        .whatsapp-btn { background: #25D366; color: #fff; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .whatsapp-btn:hover { background: #1da851; }
+        .email-btn { background: #1e3c72; color: #fff; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .email-btn:hover { background: #152a52; }
 
         /* Form Status Messages */
         .form-status { padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; display: none; }
@@ -116,6 +123,7 @@
             .contact-grid { grid-template-columns: 1fr; }
             .footer-content { grid-template-columns: 1fr; }
             .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+            .form-buttons { flex-direction: column; }
         }
     </style>
 </head>
@@ -146,11 +154,13 @@
                 { img: 'https://vrecind.com/wp-content/uploads/2025/09/WhatsApp-Image-2025-09-24-at-12.49.46-2.jpeg?auto=format&fit=crop&w=600&q=80', title: 'Construction Project 6' }
             ];
 
-            // Form submission handler with email and WhatsApp integration
+            // State for submission method
+            const [submissionMethod, setSubmissionMethod] = React.useState('whatsapp');
+
+            // Form submission handler
             const handleSubmit = async (e) => {
                 e.preventDefault();
                 const form = e.target;
-                const submitBtn = form.querySelector('.submit-btn');
                 const statusDiv = form.querySelector('.form-status');
                 
                 // Get form data
@@ -164,27 +174,48 @@
                 };
 
                 try {
-                    // Send to WhatsApp
-                    const whatsappMessage = `New Enquiry from: ${data.name},%0APhone: ${data.phone},%0AEmail: ${data.email},%0AService: ${data.service},%0AMessage: ${data.message}`;
-                    const whatsappUrl = `https://wa.me/919000316877?text=${whatsappMessage}`;
-                    
-                    // Open WhatsApp in new tab
-                    window.open(whatsappUrl, '_blank');
-                    
-                    // Email (via mailto)
-					const mailtoLink = `mailto:ntecworks@gmail.com?subject=Enquiry from ${name}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + ' (' + email + ')')}`;
-					window.open(mailtoLink, '_blank');
+                    if (submissionMethod === 'whatsapp') {
+                        // Send to WhatsApp
+                        const whatsappMessage = `New Enquiry from: ${data.name},%0APhone: ${data.phone},%0AEmail: ${data.email},%0AService: ${data.service},%0AMessage: ${data.message}`;
+                        const whatsappUrl = `https://wa.me/919000316877?text=${whatsappMessage}`;
+                        
+                        // Open WhatsApp in new tab
+                        window.open(whatsappUrl, '_blank');
+                        
+                        // Show success message
+                        statusDiv.className = 'form-status success';
+                        statusDiv.textContent = 'WhatsApp message prepared! Please send the message in the WhatsApp window.';
+                        statusDiv.style.display = 'block';
+                        
+                    } else if (submissionMethod === 'email') {
+                        // Prepare email content
+                        const subject = `Enquiry from ${data.name} - Service: ${data.service}`;
+                        const body = `
+Enquiry Details:
 
-                    // Show loading state
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
-                    statusDiv.className = 'form-status';
-                    statusDiv.style.display = 'none';
+Name: ${data.name}
+Phone: ${data.phone}
+Email: ${data.email}
+Service Interested In: ${data.service}
 
-                    // Show success message
-                    statusDiv.className = 'form-status success';
-                    statusDiv.textContent = 'Thank you! Your enquiry has been sent. We will contact you soon.';
-                    statusDiv.style.display = 'block';
+Message:
+${data.message}
+
+---
+This enquiry was sent from the Neo TECH Engineers & Construction website.
+                        `;
+
+                        // Create mailto link
+                        const mailtoLink = `mailto:ntecworks@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        
+                        // Open email client
+                        window.location.href = mailtoLink;
+                        
+                        // Show success message
+                        statusDiv.className = 'form-status success';
+                        statusDiv.textContent = 'Email client opened! Please send the email to complete your enquiry.';
+                        statusDiv.style.display = 'block';
+                    }
                     
                     // Reset form
                     form.reset();
@@ -194,10 +225,6 @@
                     statusDiv.className = 'form-status error';
                     statusDiv.textContent = 'Sorry, there was an error sending your enquiry. Please try again or contact us directly.';
                     statusDiv.style.display = 'block';
-                } finally {
-                    // Reset button state
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Send Enquiry';
                 }
             };
 
@@ -340,10 +367,22 @@
                                         <textarea id="message" name="message" required></textarea>
                                     </div>
                                     
-                                    <button type="submit" className="submit-btn">Send Enquiry</button>
-                                    <p style={{marginTop: '10px', fontSize: '0.9rem', color: '#666', textAlign: 'center'}}>
-                                        Your enquiry will be sent to WhatsApp. Please send the message in WhatsApp window.
-                                    </p>
+                                    <div className="form-buttons">
+                                        <button 
+                                            type="submit" 
+                                            className={submissionMethod === 'whatsapp' ? "whatsapp-btn" : "submit-btn"}
+                                            onClick={() => setSubmissionMethod('whatsapp')}
+                                        >
+                                            <i className="fab fa-whatsapp"></i> Send via WhatsApp
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            className={submissionMethod === 'email' ? "email-btn" : "submit-btn"}
+                                            onClick={() => setSubmissionMethod('email')}
+                                        >
+                                            <i className="fas fa-envelope"></i> Send via Email
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
